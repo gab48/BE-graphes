@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 
+/**Ceci est un nouveau commentaire :)**/
+
 /**
  * Base class for algorithm classes.
  *
