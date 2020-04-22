@@ -30,6 +30,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         labels.get(data.getOrigin().getId()).setCost(0);
         tas.insert(labels.get(data.getOrigin().getId()));
+        this.notifyOriginProcessed(data.getOrigin());
         
         // Dijkstra
         boolean found = false;
@@ -37,6 +38,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         while(!tas.isEmpty() && !found) {
         	xLabel = tas.deleteMin();
         	xLabel.setMark();
+        	this.notifyNodeMarked(xLabel.getNode());
         	found = xLabel.getNode().equals(data.getDestination());
         	for(Arc arc : xLabel.getNode().getSuccessors() ) {
         		if(data.isAllowed(arc)) {
@@ -46,7 +48,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        				yLabel.setCost(xLabel.getCost() + arc.getLength());
 	        				try {
 	        					tas.remove(yLabel);
-	        				} catch (Exception e) {}
+	        				} catch (Exception e) {
+	        					this.notifyNodeReached(yLabel.getNode());
+	        				}
 	        				tas.insert(yLabel);
 	        				yLabel.setFather(arc);
 	        			}
@@ -57,6 +61,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         // Construct Path
         if (found) {
+        	this.notifyDestinationReached(data.getDestination());
         	ArrayList<Arc> arcs = new ArrayList<Arc>();
         	Arc currentArc = labels.get(data.getDestination().getId()).getFather();
         	boolean completed = false;
