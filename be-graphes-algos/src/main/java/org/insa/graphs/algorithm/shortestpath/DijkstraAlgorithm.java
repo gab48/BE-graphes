@@ -1,5 +1,13 @@
 package org.insa.graphs.algorithm.shortestpath;
 
+import java.util.ArrayList;
+import org.insa.graphs.algorithm.AbstractSolution.Status;
+import org.insa.graphs.algorithm.utils.BinaryHeap;
+import org.insa.graphs.algorithm.utils.Label;
+import org.insa.graphs.model.Arc;
+import org.insa.graphs.model.Node;
+import org.insa.graphs.model.Path;
+
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
     public DijkstraAlgorithm(ShortestPathData data) {
@@ -9,8 +17,66 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     @Override
     protected ShortestPathSolution doRun() {
         final ShortestPathData data = getInputData();
-        ShortestPathSolution solution = null;
-        // TODO:
+        ShortestPathSolution solution = null ;
+        ArrayList<Label> labels = new ArrayList<Label>();
+        BinaryHeap<Label> tas = new BinaryHeap<Label>();
+        
+        Label xLabel = null;
+        Label yLabel = null;
+        
+        // Initialisation
+        for(Node node : data.getGraph().getNodes()) {
+        	labels.add(new Label(node));
+        }
+        labels.get(data.getOrigin().getId()).setCost(0);
+        tas.insert(labels.get(data.getOrigin().getId()));
+        
+        // Dijkstra
+        boolean found = false;
+        
+        while(!tas.isEmpty() && !found) {
+        	xLabel = tas.deleteMin();
+        	xLabel.setMark();
+        	found = xLabel.getNode().equals(data.getDestination());
+        	for(Arc arc : xLabel.getNode().getSuccessors() ) {
+        		if(data.isAllowed(arc)) {
+	        		yLabel = labels.get(arc.getDestination().getId());
+	        		if (!yLabel.isMarked()) {
+	        			if (yLabel.getCost() > (xLabel.getCost() + arc.getLength())) {
+	        				yLabel.setCost(xLabel.getCost() + arc.getLength());
+	        				try {
+	        					tas.remove(yLabel);
+	        				} catch (Exception e) {}
+	        				tas.insert(yLabel);
+	        				yLabel.setFather(arc);
+	        			}
+	        		}
+        		}
+        	}
+        }
+        
+        // Construct Path
+        if (found) {
+        	ArrayList<Arc> arcs = new ArrayList<Arc>();
+        	Arc currentArc = labels.get(data.getDestination().getId()).getFather();
+        	boolean completed = false;
+        
+        	while(!completed) {
+        		arcs.add(0, currentArc);
+        		completed = currentArc.getOrigin().equals(data.getOrigin());
+        		if (!completed) {
+        			currentArc = labels.get(currentArc.getOrigin().getId()).getFather();
+        		}
+        	}
+        
+        	Path shortest = new Path(data.getGraph(), arcs);
+        
+        	solution = new ShortestPathSolution(data, Status.FEASIBLE, shortest);
+        } else {
+        	solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
+        }
+        	
+        
         return solution;
     }
 
