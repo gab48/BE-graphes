@@ -54,15 +54,10 @@ public class Label implements Comparable<Label>{
 
 	@Override
 	public int compareTo(Label l) {
-		if(this.cost < l.cost) {
-			return -1;
-		} else if (this.cost > 0) {
-			return 1;
-		}
-		return 0;
+		return Double.compare(this.getCost(), l.getCost());
 	}
 	
-	
-	
-	
+	public String toString() {
+		return Double.toString(this.getCost());
+	}
 }

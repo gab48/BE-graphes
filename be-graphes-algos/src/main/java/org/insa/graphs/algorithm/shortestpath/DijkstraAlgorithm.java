@@ -34,7 +34,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         // Dijkstra
         boolean found = false;
-        
         while(!tas.isEmpty() && !found) {
         	xLabel = tas.deleteMin();
         	xLabel.setMark();
@@ -44,15 +43,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		if(data.isAllowed(arc)) {
 	        		yLabel = labels.get(arc.getDestination().getId());
 	        		if (!yLabel.isMarked()) {
-	        			if (yLabel.getCost() > (xLabel.getCost() + arc.getLength())) {
-	        				yLabel.setCost(xLabel.getCost() + arc.getLength());
+	        			if (yLabel.getCost() > (xLabel.getCost() + data.getCost(arc))) {
 	        				try {
 	        					tas.remove(yLabel);
 	        				} catch (Exception e) {
 	        					this.notifyNodeReached(yLabel.getNode());
 	        				}
-	        				tas.insert(yLabel);
+	        				yLabel.setCost(xLabel.getCost() + data.getCost(arc));
 	        				yLabel.setFather(arc);
+	        				tas.insert(yLabel);
 	        			}
 	        		}
         		}

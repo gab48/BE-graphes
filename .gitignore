@@ -19,3 +19,6 @@ Maps
 *.mapgr
 *.path
 *.tgz
+
+#IntelliJ folders
+.idea/

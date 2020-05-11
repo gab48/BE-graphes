@@ -65,6 +65,13 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     protected int indexLeft(int index) {
         return index * 2 + 1;
     }
+    
+    /**
+     * @return Index of the right child of the given index.
+     */
+    protected int indexRight(int index) {
+        return index * 2 + 2;
+    }
 
     /**
      * Internal method to percolate up in the heap.
@@ -136,31 +143,58 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     }
     
     int indexOf(E x) {
-        for (int i = 0; i < this.currentSize; i++) {
-            if (x.equals(this.array.get(i))) {
-                return i;
-            }
+        int index = this.array.indexOf(x);
+        if (index < this.currentSize) {
+        	return index;
         }
         return -1;
     }
 
     @Override
     public void remove(E x) throws ElementNotFoundException {
-    	if (!this.isEmpty()) {
-    		int xIndex = this.indexOf(x);
-    		if (xIndex != -1) {
-    			E lastItem = this.array.get(--this.currentSize);
-        		this.arraySet(xIndex, lastItem);
-        		percolateUp(xIndex);
-        		percolateDown(xIndex);
-    		} else {
-    			throw new ElementNotFoundException(x);
-    		}
-    	} else {
-    		throw new ElementNotFoundException(x);
-    	}
+		int xIndex = this.indexOf(x);
+		if (xIndex != -1) {
+			E lastItem = this.array.get(--this.currentSize);
+    		this.arraySet(xIndex, lastItem);
+            this.percolateUp(xIndex);
+            this.percolateDown(xIndex);
+		} else {
+			throw new ElementNotFoundException(x);
+		}
     }
+    
+    public boolean isValid() {
+        if(this.currentSize <= 1) {
+            return true;
+        }
 
+        return this.isValid(0);
+    }
+    
+    public boolean isValid(int index) {
+    	E currentEl = this.array.get(index);
+    	int leftIndex = this.indexLeft(index);
+    	int rightIndex = this.indexRight(index);
+    	
+    	if(leftIndex >= this.currentSize) {
+    		return true;
+    	}
+    	
+    	if(currentEl.compareTo(this.array.get(leftIndex)) > 0) {
+    		return false ;
+        }
+    	
+    	if(rightIndex < this.currentSize) {
+            if(currentEl.compareTo(this.array.get(rightIndex)) > 0) {
+                return false ;
+            }
+
+            return this.isValid(leftIndex) && this.isValid(rightIndex) ;
+        }
+    	
+    	return this.isValid(leftIndex) ;
+    }
+    
     @Override
     public E findMin() throws EmptyPriorityQueueException {
         if (isEmpty())
