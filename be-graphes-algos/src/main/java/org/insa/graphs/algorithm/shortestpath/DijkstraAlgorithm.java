@@ -10,6 +10,10 @@ import org.insa.graphs.model.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
+	protected Label makeLabel (Node node){
+		return new Label(node);
+	}
+
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
@@ -26,7 +30,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         // Initialisation
         for(Node node : data.getGraph().getNodes()) {
-        	labels.add(new Label(node));
+        	labels.add(makeLabel(node));
         }
         labels.get(data.getOrigin().getId()).setCost(0);
         tas.insert(labels.get(data.getOrigin().getId()));
@@ -74,10 +78,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         
         	Path shortest = new Path(data.getGraph(), arcs);
-        	Path checkShortest = Path.createShortestPathFromNodes(data.getGraph(), shortest.getNodes());
-			Path checkFastest = Path.createFastestPathFromNodes(data.getGraph(), shortest.getNodes());
-			System.out.println("Equal to shortest path from nodes ? " + shortest.equalTo(checkShortest));
-			System.out.println("Equal to fastest path from nodes ? " + shortest.equalTo(checkFastest));
+        	//Path checkShortest = Path.createShortestPathFromNodes(data.getGraph(), shortest.getNodes());
+			//Path checkFastest = Path.createFastestPathFromNodes(data.getGraph(), shortest.getNodes());
+			//System.out.println("Equal to shortest path from nodes ? " + shortest.equalTo(checkShortest));
+			//System.out.println("Equal to fastest path from nodes ? " + shortest.equalTo(checkFastest));
         
         	solution = new ShortestPathSolution(data, Status.FEASIBLE, shortest);
         } else {

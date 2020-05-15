@@ -5,32 +5,34 @@ import org.insa.graphs.model.Arc;
 
 public class Label implements Comparable<Label>{
 	
-	private Node currentNode;
-	private boolean marked;
-	private double cost;
-	private Arc father;
+	protected Node node;
+	protected boolean marked;
+	protected double cost;
+	protected Arc father;
 	
 	public Label(Node node, boolean mark, double cost, Arc father) {
-		this.currentNode = node;
+		this.node = node;
 		this.marked = mark;
 		this.cost = cost;
 		this.father = father;
 	}
 	
 	public Label(Node node) {
-		this.currentNode = node;
+		this.node = node;
 		this.marked = false;
 		this.cost = Double.POSITIVE_INFINITY;
 		this.father = null;
 	}
 	
 	public Node getNode() {
-		return this.currentNode;
+		return this.node;
 	}
 	
 	public double getCost() {
 		return this.cost;
 	}
+
+	public double getTotalCost() { return this.cost; }
 	
 	public void setCost(double c) {
 		this.cost = c;
@@ -54,7 +56,11 @@ public class Label implements Comparable<Label>{
 
 	@Override
 	public int compareTo(Label l) {
-		return Double.compare(this.getCost(), l.getCost());
+		int comp = Double.compare(this.getTotalCost(), l.getTotalCost());
+		if (comp == 0) {
+			comp = Double.compare(this.getTotalCost() - this.getCost(), l.getTotalCost() - l.getCost());
+		}
+		return comp;
 	}
 	
 	public String toString() {
