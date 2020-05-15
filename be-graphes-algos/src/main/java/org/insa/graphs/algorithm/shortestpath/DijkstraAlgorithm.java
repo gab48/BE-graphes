@@ -74,6 +74,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         
         	Path shortest = new Path(data.getGraph(), arcs);
+        	Path checkShortest = Path.createShortestPathFromNodes(data.getGraph(), shortest.getNodes());
+			Path checkFastest = Path.createFastestPathFromNodes(data.getGraph(), shortest.getNodes());
+			System.out.println("Equal to shortest path from nodes ? " + shortest.equalTo(checkShortest));
+			System.out.println("Equal to fastest path from nodes ? " + shortest.equalTo(checkFastest));
         
         	solution = new ShortestPathSolution(data, Status.FEASIBLE, shortest);
         } else {

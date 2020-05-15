@@ -243,6 +243,18 @@ public class Path {
         return Collections.unmodifiableList(arcs);
     }
 
+	/**
+	 * @return List of nodes in the path
+	 */
+	public List<Node> getNodes() {
+    	ArrayList<Node> nodes = new ArrayList<Node>();
+    	nodes.add(this.origin);
+    	for(Arc arc: this.arcs) {
+    		nodes.add(arc.getDestination());
+		}
+    	return nodes;
+	}
+
     /**
      * Check if this path is empty (it does not contain any node).
      * 
@@ -333,5 +345,19 @@ public class Path {
         }
         return travelTime;
     }
+
+    public boolean equalTo(Path p){
+    	boolean result;
+    	result = this.getOrigin().equals(p.getOrigin());
+    	result = result && this.arcs.size() == p.arcs.size();
+    	if (result) {
+    		for(int i = 0; i < this.arcs.size(); i++) {
+    			result = result && this.arcs.get(i).equals(p.arcs.get(i));
+			}
+    		result = result && this.getMinimumTravelTime() == p.getMinimumTravelTime();
+    		result = result && this.getLength() == p.getLength();
+		}
+    	return result;
+	}
 
 }
