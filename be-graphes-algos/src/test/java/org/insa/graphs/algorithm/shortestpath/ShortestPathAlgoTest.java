@@ -16,6 +16,7 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.*;
 
@@ -24,10 +25,16 @@ public abstract class ShortestPathAlgoTest {
     private static GraphFormatter belgique, htGaronne, carre;
     private static ArrayList<AlgoTester> tests = new ArrayList<>();
     private static ArcInspector[] inspectors;
-    protected static Method method = Method.ORACLE; //Default Value
+    protected static Method method = Method.ORACLE; //Default Value, can be changed in subclasses
 
+    /**
+     * There is two different testing methods
+     */
     protected enum Method {ORACLE, NOORACLE};
 
+    /**
+     * Class used to load the graph
+     */
     private static class GraphFormatter {
         private Graph graph;
         private final String mapName;
@@ -62,8 +69,16 @@ public abstract class ShortestPathAlgoTest {
 
     }
 
+    /**
+     * Use to run the tested algorithm
+     * @param data object that regroup the information to run a test (graph, origin, destination)
+     * @return the solution of the algo
+     */
     protected abstract ShortestPathSolution computeSolution(ShortestPathData data);
 
+    /**
+     * Algo tester regroup information to run a test with or without oracle
+     */
     private static class AlgoTester {
         private ShortestPathSolution standard;
         private ShortestPathSolution solution;
@@ -87,10 +102,13 @@ public abstract class ShortestPathAlgoTest {
             this.solution = solution;
             if (method == Method.NOORACLE) {
                 Path pathFromNodes = null;
-                if (this.data.getMode() == AbstractInputData.Mode.LENGTH) {
-                    pathFromNodes = Path.createShortestPathFromNodes(this.data.getGraph(), this.solution.getPath().getNodes());
-                } else {
-                    pathFromNodes = Path.createFastestPathFromNodes(this.data.getGraph(), this.solution.getPath().getNodes());
+                Path solutionPath = this.solution.getPath();
+                if (solutionPath != null) {
+                    if (this.data.getMode() == AbstractInputData.Mode.LENGTH) {
+                        pathFromNodes = Path.createShortestPathFromNodes(this.data.getGraph(), solutionPath.getNodes());
+                    } else {
+                        pathFromNodes = Path.createFastestPathFromNodes(this.data.getGraph(), solutionPath.getNodes());
+                    }
                 }
                 this.standard = new ShortestPathSolution(this.data, this.solution.getStatus(), pathFromNodes);
             }
@@ -98,6 +116,12 @@ public abstract class ShortestPathAlgoTest {
 
     }
 
+    /**
+     * Add a specifict test from origin to destination in the given graph
+     * @param graphF
+     * @param origin
+     * @param destination
+     */
     private static void addTest(GraphFormatter graphF, int origin, int destination) {
         Graph graph = graphF.getGraph();
         for (ArcInspector inspector : inspectors) {
@@ -106,14 +130,32 @@ public abstract class ShortestPathAlgoTest {
         }
     }
 
+    /**
+     * Add a test for the given graph, and choose the origin and destination randomly
+     * @param graphF
+     */
+    private static void addTest(GraphFormatter graphF) {
+        int origin = ThreadLocalRandom.current().nextInt(0, graphF.graph.size());
+        int destination = ThreadLocalRandom.current().nextInt(0, graphF.graph.size());
+        addTest(graphF, origin, destination);
+    }
+
+    /**
+     * List of scenario we want to test
+     */
     private static void computeTests() {
         //Unfeasible
         addTest(carre, 0, 0);
-        //addTest(belgique, 407916, 183547);
+        addTest(belgique, 407916, 183547);
         //Feasible
         addTest(carre, 0, 12);
         addTest(htGaronne, 67779, 87958);
-        //addTest(belgique, 761908,454325);
+        addTest(belgique, 761908,454325);
+        //Random tests
+        addTest(carre);
+        addTest(htGaronne);
+        addTest(belgique);
+
     }
 
     @BeforeClass
@@ -198,10 +240,4 @@ public abstract class ShortestPathAlgoTest {
             }
         }
     }
-
-    @Test
-    public void testPathsWithoutOracle() {
-
-    }
-
 }
