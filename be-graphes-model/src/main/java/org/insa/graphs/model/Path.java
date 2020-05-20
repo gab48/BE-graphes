@@ -346,18 +346,4 @@ public class Path {
         return travelTime;
     }
 
-    public boolean equalTo(Path p){
-    	boolean result;
-    	result = this.getOrigin().equals(p.getOrigin());
-    	result = result && this.arcs.size() == p.arcs.size();
-    	if (result) {
-    		for(int i = 0; i < this.arcs.size(); i++) {
-    			result = result && this.arcs.get(i).equals(p.arcs.get(i));
-			}
-    		result = result && this.getMinimumTravelTime() == p.getMinimumTravelTime();
-    		result = result && this.getLength() == p.getLength();
-		}
-    	return result;
-	}
-
 }

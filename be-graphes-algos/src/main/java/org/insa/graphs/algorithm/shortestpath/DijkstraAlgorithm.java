@@ -41,6 +41,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         while(!tas.isEmpty() && !found) {
         	xLabel = tas.deleteMin();
         	xLabel.setMark();
+			/**System.out.println("Marked Label Cost : " + xLabel.getCost());
+        	if(!tas.isValid()) {
+				System.out.println("Warning Binary Heap is not valid !");
+			}**/
         	this.notifyNodeMarked(xLabel.getNode());
         	found = xLabel.getNode().equals(data.getDestination());
         	for(Arc arc : xLabel.getNode().getSuccessors() ) {
@@ -63,7 +67,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         
         // Construct Path
-        if (found) {
+        if (found && (data.getOrigin().getId() != data.getDestination().getId())) {
         	this.notifyDestinationReached(data.getDestination());
         	ArrayList<Arc> arcs = new ArrayList<Arc>();
         	Arc currentArc = labels.get(data.getDestination().getId()).getFather();
@@ -78,16 +82,11 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         
         	Path shortest = new Path(data.getGraph(), arcs);
-        	//Path checkShortest = Path.createShortestPathFromNodes(data.getGraph(), shortest.getNodes());
-			//Path checkFastest = Path.createFastestPathFromNodes(data.getGraph(), shortest.getNodes());
-			//System.out.println("Equal to shortest path from nodes ? " + shortest.equalTo(checkShortest));
-			//System.out.println("Equal to fastest path from nodes ? " + shortest.equalTo(checkFastest));
         
         	solution = new ShortestPathSolution(data, Status.FEASIBLE, shortest);
         } else {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);
         }
-        	
         
         return solution;
     }
