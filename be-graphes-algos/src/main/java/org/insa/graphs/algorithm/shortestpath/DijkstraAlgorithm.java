@@ -47,23 +47,25 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 			}**/
         	this.notifyNodeMarked(xLabel.getNode());
         	found = xLabel.getNode().equals(data.getDestination());
-        	for(Arc arc : xLabel.getNode().getSuccessors() ) {
-        		if(data.isAllowed(arc)) {
-	        		yLabel = labels.get(arc.getDestination().getId());
-	        		if (!yLabel.isMarked()) {
-	        			if (yLabel.getCost() > (xLabel.getCost() + data.getCost(arc))) {
-	        				try {
-	        					tas.remove(yLabel);
-	        				} catch (Exception e) {
-	        					this.notifyNodeReached(yLabel.getNode());
-	        				}
-	        				yLabel.setCost(xLabel.getCost() + data.getCost(arc));
-	        				yLabel.setFather(arc);
-	        				tas.insert(yLabel);
-	        			}
-	        		}
-        		}
-        	}
+        	if(!found) {
+				for (Arc arc : xLabel.getNode().getSuccessors()) {
+					if (data.isAllowed(arc)) {
+						yLabel = labels.get(arc.getDestination().getId());
+						if (!yLabel.isMarked()) {
+							if (yLabel.getCost() > (xLabel.getCost() + data.getCost(arc))) {
+								try {
+									tas.remove(yLabel);
+								} catch (Exception e) {
+									this.notifyNodeReached(yLabel.getNode());
+								}
+								yLabel.setCost(xLabel.getCost() + data.getCost(arc));
+								yLabel.setFather(arc);
+								tas.insert(yLabel);
+							}
+						}
+					}
+				}
+			}
         }
         
         // Construct Path
