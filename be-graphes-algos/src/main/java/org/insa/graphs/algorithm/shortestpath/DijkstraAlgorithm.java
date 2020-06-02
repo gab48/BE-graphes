@@ -41,8 +41,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         while(!tas.isEmpty() && !found) {
         	xLabel = tas.deleteMin();
         	xLabel.setMark();
-			/**System.out.println("Marked Label Cost : " + xLabel.getCost());
-        	if(!tas.isValid()) {
+			//System.out.println("Marked Label Cost : " + xLabel.getCost());
+        	/**if(!tas.isValid()) {
 				System.out.println("Warning Binary Heap is not valid !");
 			}**/
         	this.notifyNodeMarked(xLabel.getNode());
@@ -84,7 +84,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         
         	Path shortest = new Path(data.getGraph(), arcs);
-        
+			//System.out.println("Path valid? " + shortest.isValid());
+
         	solution = new ShortestPathSolution(data, Status.FEASIBLE, shortest);
         } else {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE, null);

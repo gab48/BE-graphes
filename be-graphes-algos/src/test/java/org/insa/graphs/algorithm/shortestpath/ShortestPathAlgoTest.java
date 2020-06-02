@@ -150,12 +150,14 @@ public abstract class ShortestPathAlgoTest {
         //Feasible
         addTest(carre, 0, 12);
         addTest(htGaronne, 67779, 87958);
+        addTest(htGaronne, 110707, 79697);
         addTest(belgique, 761908,454325);
+        addTest(belgique,442335, 591002);
+
         //Random tests
         addTest(carre);
         addTest(htGaronne);
         addTest(belgique);
-
     }
 
     @BeforeClass
@@ -169,6 +171,7 @@ public abstract class ShortestPathAlgoTest {
         };
 
         computeTests();
+
     }
 
     @Before
@@ -237,6 +240,18 @@ public abstract class ShortestPathAlgoTest {
                 assertEquals(test.standard.getPath().getArcs().size(), test.solution.getPath().getArcs().size());
             } else {
                 assertNull(test.solution.getPath());
+            }
+        }
+    }
+
+    @Test
+    public void tmpsExec() {
+        if (method == Method.ORACLE) {
+            for (AlgoTester test : tests) {
+                System.out.println("[Chemin] carte=" + test.standard.getInputData().getGraph().getMapName() + " points=" + test.standard.getInputData().getOrigin().getId() + "/" + test.standard.getInputData().getDestination().getId());
+                System.out.println("Temps Belleman : " + test.standard.getSolvingTime().toString());
+                System.out.println("Temps solution : " + test.solution.getSolvingTime().toString());
+                System.out.println("");
             }
         }
     }
